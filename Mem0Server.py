@@ -23,6 +23,8 @@ config = {
         "config": {
             **({"ollama_base_url": os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")}
                if os.environ.get("LLM_PROVIDER", "openai") == "ollama" else {}),
+            **({"openai_base_url": os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")}
+               if os.environ.get("LLM_PROVIDER", "openai") == "openai" else {}),
             "model": os.environ.get("LLM_MODEL", "gpt-4o"),
             "temperature": float(os.environ.get("LLM_TEMPERATURE", 0.2)),
             "max_tokens": int(os.environ.get("LLM_MAX_TOKENS", 1500))
@@ -33,6 +35,8 @@ config = {
         "config": {
             **({"ollama_base_url": os.environ.get("EMBEDDER_OLLAMA_BASE_URL", "http://localhost:11434")}
                if os.environ.get("EMBEDDER_PROVIDER", "openai") == "ollama" else {}),
+            **({"openai_base_url": os.environ.get("EMBEDDER_OPENAI_BASE_URL", "https://api.openai.com/v1")}
+               if os.environ.get("EMBEDDER_PROVIDER", "openai") == "openai" else {}),
             "model": os.environ.get("EMBEDDER_MODEL", "text-embedding-3-large"),
             "embedding_dims": int(os.environ.get("EMBEDDER_DIMS", 768))
         }
