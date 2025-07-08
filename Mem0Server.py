@@ -13,7 +13,7 @@ config = {
     "vector_store": {
         "provider": os.environ.get("VECTOR_STORE_PROVIDER", "qdrant"),
         "config": {
-            "embedding_model_dims": int(os.environ.get("EMBEDDING_MODEL_DIMS", 768)),
+            "embedding_model_dims": int(os.environ.get("EMBEDDER_DIMS", 768)),
             "host": os.environ.get("VECTOR_STORE_HOST", "localhost"),
             "port": int(os.environ.get("VECTOR_STORE_PORT", 6333))
         }
@@ -23,7 +23,8 @@ config = {
         "config": {
             **({"ollama_base_url": os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")}
                if os.environ.get("LLM_PROVIDER", "openai") == "ollama" else {}),
-            **({"openai_base_url": os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")}
+            **({"openai_base_url": os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+                "api_key": os.environ.get("OPENAI_API_KEY")}
                if os.environ.get("LLM_PROVIDER", "openai") == "openai" else {}),
             "model": os.environ.get("LLM_MODEL", "gpt-4o"),
             "temperature": float(os.environ.get("LLM_TEMPERATURE", 0.2)),
@@ -35,7 +36,8 @@ config = {
         "config": {
             **({"ollama_base_url": os.environ.get("EMBEDDER_OLLAMA_BASE_URL", "http://localhost:11434")}
                if os.environ.get("EMBEDDER_PROVIDER", "openai") == "ollama" else {}),
-            **({"openai_base_url": os.environ.get("EMBEDDER_OPENAI_BASE_URL", "https://api.openai.com/v1")}
+            **({"openai_base_url": os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+                "api_key": os.environ.get("OPENAI_API_KEY")}
                if os.environ.get("EMBEDDER_PROVIDER", "openai") == "openai" else {}),
             "model": os.environ.get("EMBEDDER_MODEL", "text-embedding-3-large"),
             "embedding_dims": int(os.environ.get("EMBEDDER_DIMS", 768))
@@ -62,7 +64,9 @@ def add_memory():
 # 获取所有内存
 @app.route('/memory/get_all', methods=['POST'])
 def get_all_memories():
-    all_memories = m.get_all()
+    data = request.get_json()
+    user_id = data.get("user_id")
+    all_memories = m.get_all(user_id=user_id)
     return jsonify(all_memories), 200
 
 # 获取特定内存
